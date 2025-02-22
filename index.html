@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>multitude - 連帯・カオス・境界線の融解</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary-color: #ff3366;
+            --secondary-color: #3d5af1;
+            --dark-color: #121212;
+            --light-color: #f0f0f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAB3RJTUUH5AoTDDYZYWOJJQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAACoklEQVRo3u2aTU8TQRiAn5ldWlrKR0ExgaKJJiQcOGji0YPxqBf1H3jwF+iJg0dvnvTEgZsXjSbeJDFETzVeOEiCxkSgVCAI0m7fcdMxFtput2W3u9j3tN3Zmc4+8847szPvgCRJkiRJkiRJ0n+i+qpHPzk5GTLGhIBBY4wDOEAREEAeWAXWXNddiEQi8xcvB4gxXb4EaPL09PR9Y8xRQAFiC0OhkJqdnc30BMjU1NRVYEQp1S+vXAcaA5xYLLbUVZBEIuEopV4DQ0op5Ubq2lgDnPn5+YWOgcRisbOO47wDfNjM3zXXV+xMpVJvOwLied4ZpVQSCGFjYLOYQjcDkclkPgPRtoG4rntKKZUEQs0QYsOtW11pI+uAE41G3+8JEsdxTiillICOmVYhdoLIAaFoNPqhZZB0On0cWASCrULsBJEHBmKx2MfAsCCO4xwBksBAKxA7QRSAgXA4/CkwDIgx5hCQBPa3CrELRAE4kEgkeoeBuAvsa4bYI0RJKdXTSzLq1hf6bNkFjFV9ZgERQFk5rAAtoVyv/HaVXQpRdkruvgTlcPD1yCF2V/VqnCJ4fmgRO8DsOfY0xA4tUj9UtIUQXWuXrQwV7f8SMY1TqgXELj1Ia6Pi1hAbQNEW/9PUfNsIhYAKaBWIsjBtaEyDr7HtbM+Oc+jKOYTCwLKBUQhZQggDvLcvQu0VFBAGEKiqfboiAIEABLhF0FWvgTHA0UHhGAPLOTDGgBZCrBRcK1esDAojAAFG1LqIMUIt5UB3EMSUKmP6azkF4TfE7LJRoUoxC1BKUShwLABBqVQZQpOH4R0TSwjM3K9uJQJMGTBlSsUCMHR8iIBfpv9n7UJYlCeP7/Dq6QNunL+MEDVhmCRJkiRJkiRJ0i/Z+MZHckZsKwAAAABJRU5ErkJggg==');
+            opacity: 0.05;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            font-size: 4rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            color: var(--light-color);
+            animation: pulse 8s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { text-shadow: 0 0 10px rgba(255, 51, 102, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(61, 90, 241, 0.7); }
+            100% { text-shadow: 0 0 10px rgba(255, 51, 102, 0.5); }
+        }
+        
+        .tagline {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            text-align: center;
+            max-width: 700px;
+        }
+        
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--primary-color), transparent);
+            top: -100px;
+            left: -150px;
+            opacity: 0.3;
+            animation: float 15s infinite alternate;
+        }
+        
+        .circle-2 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, var(--secondary-color), transparent);
+            bottom: -200px;
+            right: -200px;
+            opacity: 0.3;
+            animation: float 20s infinite alternate-reverse;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(50px, 30px) rotate(180deg); }
+            100% { transform: translate(-30px, 50px) rotate(360deg); }
+        }
+        
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 0;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            background-color: rgba(18, 18, 18, 0.5);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--light-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--light-color);
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .section {
+            padding: 100px 0;
+            position: relative;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background-color: var(--primary-color);
+        }
+        
+        .activities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .activity-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 30px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.1), rgba(61, 90, 241, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .activity-card:hover::before {
+            opacity: 1;
+        }
+        
+        .activity-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--light-color);
+        }
+        
+        .about {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 50px;
+        }
+        
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+            padding-right: 50px;
+        }
+        
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .about-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .contact-form {
+            max-width: 600px;
+            margin: 50px auto 0;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: var(--light-color);
+        }
+        
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: var(--light-color);
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--light-color);
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        footer {
+            padding: 50px 0;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        .footer-text {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .tagline {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .about-text {
+                padding-right: 0;
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise"></div>
+    
+    <nav>
+        <div class="container nav-container">
+            <div class="nav-logo">multitude</div>
+            <ul class="nav-links">
+                <li><a href="#about">私たちについて</a></li>
+                <li><a href="#activities">活動内容</a></li>
+                <li><a href="#contact">お問い合わせ</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <header>
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="logo-container">
+            <div class="logo">multitude</div>
+        </div>
+        <p class="tagline">連帯・カオス・境界線の融解。私たちは多様性の中に新たな共同体を創造します。</p>
+        <a href="#about" class="btn">私たちについて</a>
+    </header>
+    
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="section-title">私たちについて</h2>
+            <div class="about">
+                <div class="about-text">
+                    <p>multitudeは、社会の既存の境界線を溶かし、新たな連帯のかたちを模索する集合体です。私たちは個々の差異を抑圧するのではなく、むしろそれらを活かして複雑性と多様性に満ちた豊かな社会空間を創り出すことを目指しています。</p>
+                    <p>私たちの活動は、アート、政治、社会実践が交差する領域で展開され、オルタナティブな共同体のあり方を実験的に提示します。境界を越えた協働によって、現代社会が直面する分断や孤立の問題に対する創造的な解決策を見出していくことが私たちのミッションです。</p>
+                </div>
+                <div class="about-image">
+                    <!-- ここにロゴや団体イメージを表示 -->
+                    <img src="about-image.jpg" alt="multitude団体イメージ">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="activities" class="section">
+        <div class="container">
+            <h2 class="section-title">活動内容</h2>
+            <div class="activities">
+                <div class="activity-card">
+                    <h3 class="activity-title">連帯のワークショップ</h3>
+                    <p>異なるバックグラウンドを持つ人々が集まり、対話と創造的な協働を通じて新たな連帯のあり方を探索するワークショップを定期的に開催しています。参加者同士の境界を溶かし、多様性に根ざした新たな関係性を構築します。</p>
+                </div>
+                
+                <div class="activity-card">
+                    <h3 class="activity-title">境界線のリマッピング</h3>
+                    <p>社会に存在する様々な境界線（国境、ジェンダー、階級など）を再考し、それらを越えた新たな共同体のビジョンを提示するプロジェクトを展開しています。アートや対話を通じて、既存の分類を解体し、より流動的で包括的な社会のあり方を模索します。</p>
+                </div>
+                
+                <div class="activity-card">
+                    <h3 class="activity-title">カオスからの創造</h3>
+                    <p>秩序と混沌の間を漂うクリエイティブな実験を通じて、新たな思考や表現の可能性を探ります。予測不可能性と偶然性を取り入れた創造プロセスを通じて、固定化された思考の枠組みを揺るがし、革新的なアイデアの生成を促します。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="contact" class="section">
+        <div class="container">
+            <h2 class="section-title">お問い合わせ</h2>
+            <div class="contact-form">
+                <div class="form-group">
+                    <label for="name" class="form-label">お名前</label>
+                    <input type="text" id="name" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">メールアドレス</label>
+                    <input type="email" id="email" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message" class="form-label">メッセージ</label>
+                    <textarea id="message" class="form-textarea" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn">送信する</button>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p class="footer-text">&copy; 2025 multitude - 連帯・カオス・境界線の融解</p>
+        </div>
+    </footer>
+</body>
+</html>
